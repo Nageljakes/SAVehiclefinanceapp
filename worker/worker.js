@@ -148,7 +148,6 @@ const TEXT_FIELDS = {
   otherIncomeSource: 160, settlementLetter: 10,
   accountHolder: 160, bankName: 80, branchCode: 20, accountNo: 40,
   accountType: 40, accountTypeOther: 60,
-  idxBankName: 80, idxAccountNumber: 40, idxAccountType: 40, idxBranchNumber: 20, idxBranchName: 80,
   relSurname: 80, relFullNames: 120, relAddress: 300, relCell: 40, relationship: 80,
   declarationExceptions: 2000, signedAt: 20, dateOfBirth: 20,
   page: 300, source: 300, submittedAt: 40
@@ -164,7 +163,7 @@ const MONEY_FIELDS = [
 ];
 
 const BOOL_FIELDS = [
-  'idxSameAccount', 'idxConsent', 'serviceFeeAck', 'creditBureauConsent',
+  'serviceFeeAck', 'creditBureauConsent',
   'nlrConsent', 'truthDeclaration', 'popiaConsent'
 ];
 
@@ -193,7 +192,6 @@ function validate(d) {
   if (!hasSaId && !d.passportNumber) p.push('idNumber');
 
   if (!d.accountNo.replace(/\D/g, '')) p.push('accountNo');
-  if (!d.idxConsent)          p.push('idxConsent');
   if (!d.creditBureauConsent) p.push('creditBureauConsent');
   if (!d.truthDeclaration)    p.push('truthDeclaration');
   if (!d.popiaConsent)        p.push('popiaConsent');
@@ -228,8 +226,7 @@ function redact(r) {
     idNumber: tail(r.idNumber),
     passportNumber: tail(r.passportNumber),
     spouseId: tail(r.spouseId),
-    accountNo: tail(r.accountNo),
-    idxAccountNumber: tail(r.idxAccountNumber)
+    accountNo: tail(r.accountNo)
   };
 }
 
@@ -469,16 +466,6 @@ function sections(r) {
     ['Branch code', dash(r.branchCode)],
     ['Account number', dash(r.accountNo)],
     ['Account type', r.accountTypeOther || dash(r.accountType)]
-  ]]);
-
-  s.push(['IDX statement consent', [
-    ['Consent given', yn(r.idxConsent)],
-    ['Same account as above', yn(r.idxSameAccount)],
-    ['Bank', dash(r.idxBankName)],
-    ['Account number', dash(r.idxAccountNumber)],
-    ['Account type', dash(r.idxAccountType)],
-    ['Branch number', dash(r.idxBranchNumber)],
-    ['Branch name', dash(r.idxBranchName)]
   ]]);
 
   s.push(['Relative not living with applicant', [

@@ -24,7 +24,7 @@ Nine steps, mirroring the paper form:
 | 4 | Employment | Employer, occupation, period, retrenchment question |
 | 5 | Income | Gross, commission, allowance, net, other income |
 | 6 | Expenses | All 16 expense lines from the paper form |
-| 7 | Banking | Account details plus the IDX statement consent |
+| 7 | Banking | Account details |
 | 8 | Contact person | The relative not living with the applicant |
 | 9 | Declarations | A–H, the four NCA consents, signature, documents |
 

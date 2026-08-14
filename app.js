@@ -73,7 +73,7 @@
 
   // Deliberately never written to localStorage. A shared or stolen phone
   // should not carry someone's ID and bank account number around.
-  const SENSITIVE = ['idNumber', 'spouseId', 'accountNo', 'idxAccountNumber', 'passportNumber'];
+  const SENSITIVE = ['idNumber', 'spouseId', 'accountNo', 'passportNumber'];
 
   const $  = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
@@ -312,19 +312,6 @@
     on('ownProperty',    () => reveal('ownProperty', val('ownProperty') === 'Yes'));
     on('employmentType', () => reveal('selfEmployed', val('employmentType') === 'Self-employed'));
     on('accountType',    () => reveal('accountType', val('accountType') === 'Other'));
-
-    const idxSame = $('#f-idxSameAccount');
-    const syncIdx = () => { $('#rv-idx').hidden = idxSame.checked; };
-    idxSame.addEventListener('change', syncIdx);
-    syncIdx();
-
-    // Echo the applicant's name into the IDX consent wording, so they can see
-    // exactly whose statements they are authorising.
-    const echo = () => {
-      const n = [$('#f-fullNames').value, $('#f-surname').value].filter(Boolean).join(' ').trim();
-      $('#idx-name-echo').textContent = n || 'the applicant';
-    };
-    ['f-fullNames', 'f-surname'].forEach(id => $('#' + id).addEventListener('input', echo));
 
     // Declarations: an unticked box means "this one isn't true for me",
     // which the bank needs explained rather than treated as an error.
@@ -601,7 +588,6 @@
       if ($('#f-accountHolder').value.trim().length < 2) return err('accountHolder', "Please enter the account holder's name.");
       if ($('#f-bankName').value.trim().length < 2)      return err('bankName', 'Please enter your bank.');
       if ($('#f-accountNo').value.replace(/\D/g, '').length < 6) return err('accountNo', 'Please enter your account number.');
-      if (!$('#f-idxConsent').checked) return err('idxConsent', 'We need this consent to request your statements.');
     },
     8: () => {
       if ($('#f-relSurname').value.trim().length < 2)   return err('relSurname', "Please enter the relative's surname.");
