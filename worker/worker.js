@@ -139,7 +139,7 @@ const TEXT_FIELDS = {
   cell: 40, homeTel: 40, email: 160, homeAddress: 300, suburb: 100, postalCode: 10,
   periodAtAddressYears: 4, periodAtAddressMonths: 4,
   maritalStatus: 20, dateMarried: 20, marriageType: 20,
-  spouseSurname: 80, spouseFullNames: 120, spouseId: 20,
+  spouseSurname: 80, spouseFullNames: 120, spouseId: 20, spouseCell: 40, spouseDob: 20,
   rentProperty: 10, ownProperty: 10, bondedBank: 80, bondHolder: 20,
   employmentType: 40, selfEmployedNature: 200, companyName: 160, companyAddress: 300,
   companySuburb: 100, companyPostalCode: 10, landline: 40, hrNo: 40,
@@ -153,13 +153,17 @@ const TEXT_FIELDS = {
   page: 300, source: 300, submittedAt: 40
 };
 
-const MONEY_FIELDS = [
-  'vehiclePrice', 'instalmentBudget', 'grossRemuneration', 'monthlyCommission', 'carAllowance',
-  'netTakeHome', 'otherIncome', 'totalMonthlyIncome',
+const EXPENSE_FIELDS = [
   'personalLoan', 'vehicleInstalments', 'policyInsurance', 'ratesWaterElectricity',
   'bondRent', 'creditCard', 'furnitureAccounts', 'clothingAccounts', 'overdraft',
   'telephone', 'transport', 'foodEntertainment', 'education', 'spousalChildSupport',
-  'household', 'otherExpenses', 'totalMonthlyExpenses', 'monthlySurplus'
+  'household', 'otherExpenses'
+];
+
+const MONEY_FIELDS = [
+  'vehiclePrice', 'instalmentBudget', 'grossRemuneration', 'monthlyCommission', 'carAllowance',
+  'netTakeHome', 'otherIncome', 'totalMonthlyIncome', 'propertyValue', 'outstandingBondValue',
+  ...EXPENSE_FIELDS, 'totalMonthlyExpenses', 'monthlySurplus'
 ];
 
 const BOOL_FIELDS = [
@@ -185,13 +189,41 @@ function validate(d) {
   if (d.surname.length < 2)   p.push('surname');
   if (d.fullNames.length < 2) p.push('fullNames');
   if (d.cell.replace(/\D/g, '').length < 9) p.push('cell');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) p.push('email');
+  if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) p.push('email');
 
   // A non-SA applicant may be applying on a passport instead.
   const hasSaId = /^\d{13}$/.test(d.idNumber) && luhnOk(d.idNumber);
   if (!hasSaId && !d.passportNumber) p.push('idNumber');
 
-  if (!d.accountNo.replace(/\D/g, '')) p.push('accountNo');
+  if (!(d.instalmentBudget > 0)) p.push('instalmentBudget');
+  if (!d.graduate) p.push('graduate');
+  if (!d.periodAtAddressYears && !d.periodAtAddressMonths) p.push('periodAtAddress');
+  if (!d.maritalStatus) p.push('maritalStatus');
+
+  if (d.maritalStatus === 'Married') {
+    if (d.spouseSurname.length < 2)   p.push('spouseSurname');
+    if (d.spouseFullNames.length < 2) p.push('spouseFullNames');
+    if (d.spouseCell.replace(/\D/g, '').length < 9) p.push('spouseCell');
+    if (!d.spouseDob) p.push('spouseDob');
+  }
+
+  if (!d.ownProperty) p.push('ownProperty');
+  if (d.ownProperty === 'Yes') {
+    if (!(d.propertyValue > 0)) p.push('propertyValue');
+    if (d.bondedBank.length < 2) p.push('bondedBank');
+  }
+
+  if (!d.periodAtEmployerYears && !d.periodAtEmployerMonths) p.push('periodAtEmployer');
+  if (d.landline.replace(/\D/g, '').length < 9) p.push('landline');
+  if (!d.salaryDate) p.push('salaryDate');
+  if (d.companyAddress.length < 5) p.push('companyAddress');
+
+  if (EXPENSE_FIELDS.reduce((s, k) => s + d[k], 0) <= 0) p.push('expenses');
+
+  if (d.relSurname.length < 2)   p.push('relSurname');
+  if (d.relFullNames.length < 2) p.push('relFullNames');
+  if (d.relCell.replace(/\D/g, '').length < 9) p.push('relCell');
+
   if (!d.creditBureauConsent) p.push('creditBureauConsent');
   if (!d.truthDeclaration)    p.push('truthDeclaration');
   if (!d.popiaConsent)        p.push('popiaConsent');
@@ -309,7 +341,9 @@ async function sendEmail(env, r, attachments) {
     body: JSON.stringify({
       from,
       to,
-      reply_to: r.email,
+      // Email is optional now — an empty reply_to can cause Resend to
+      // reject the whole request, so only send it when there's an address.
+      ...(r.email ? { reply_to: r.email } : {}),
       subject: `Finance application — ${name}${r.vehicle ? ' — ' + r.vehicle : ''} [${r.id}]`,
       text: textBody(r),
       html: htmlBody(r),
@@ -405,10 +439,14 @@ function sections(r) {
     ['Regime', dash(r.marriageType)],
     ["Spouse's surname", dash(r.spouseSurname)],
     ["Spouse's full names", dash(r.spouseFullNames)],
+    ["Spouse's contact number", dash(r.spouseCell)],
+    ["Spouse's date of birth", dash(r.spouseDob)],
     ["Spouse's ID", dash(r.spouseId)],
     ['Rents the property', dash(r.rentProperty)],
     ['Owns property', dash(r.ownProperty)],
+    ['Property value', r.propertyValue ? R(r.propertyValue) : '—'],
     ['Bonded by', dash(r.bondedBank)],
+    ['Outstanding bond amount', r.ownProperty === 'Yes' ? R(r.outstandingBondValue) : '—'],
     ['Property in name of', dash(r.bondHolder)]
   ]]);
 
@@ -419,7 +457,7 @@ function sections(r) {
     ['Company address', dash(r.companyAddress)],
     ['Suburb', dash(r.companySuburb)],
     ['Postal code', dash(r.companyPostalCode)],
-    ['Landline', dash(r.landline)],
+    ['Work contact number', dash(r.landline)],
     ['HR number', dash(r.hrNo)],
     ['Occupation', dash(r.occupation)],
     ['Industry', dash(r.industry)],
@@ -489,7 +527,10 @@ function sections(r) {
     ['Signed on', dash(r.signedAt)]
   ]]);
 
-  return s;
+  // Banking is optional now and commonly left blank entirely — drop a section
+  // rather than show a bare heading with nothing under it. Every other
+  // section always has at least one required field, so this can't hide them.
+  return s.filter(([, rows]) => rows.some(([, v]) => v !== '—'));
 }
 
 function period(y, m) {
@@ -570,8 +611,8 @@ function htmlBody(r) {
 
     <div style="margin-top:16px">
       <a href="tel:${esc(String(r.cell).replace(/[^\d+]/g, ''))}" style="display:inline-block;background:#c3002f;color:#fff;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;margin-right:6px">Call ${esc((r.fullNames || '').split(' ')[0])}</a>
-      <a href="https://wa.me/${esc(String(r.cell).replace(/\D/g, '').replace(/^0/, '27'))}" style="display:inline-block;background:#f5f7f9;color:#14181d;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;border:1px solid #dfe4e9;margin-right:6px">WhatsApp</a>
-      <a href="mailto:${esc(r.email)}" style="display:inline-block;background:#f5f7f9;color:#14181d;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;border:1px solid #dfe4e9">Email</a>
+      <a href="https://wa.me/${esc(String(r.cell).replace(/\D/g, '').replace(/^0/, '27'))}" style="display:inline-block;background:#f5f7f9;color:#14181d;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;border:1px solid #dfe4e9${r.email ? ';margin-right:6px' : ''}">WhatsApp</a>
+      ${r.email ? `<a href="mailto:${esc(r.email)}" style="display:inline-block;background:#f5f7f9;color:#14181d;text-decoration:none;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;border:1px solid #dfe4e9">Email</a>` : ''}
     </div>
   </div>
 

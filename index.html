@@ -99,14 +99,15 @@
 
       <div class="grid-2">
         <div class="field">
-          <label for="f-instalmentBudget">Instalment budget per month</label>
+          <label for="f-instalmentBudget">Instalment budget per month <span class="req">Required</span></label>
           <div class="money"><span class="money-r">R</span>
-            <input type="text" id="f-instalmentBudget" name="instalmentBudget" inputmode="decimal" placeholder="4 500" data-money>
+            <input type="text" id="f-instalmentBudget" name="instalmentBudget" inputmode="decimal" placeholder="4 500" data-money required>
           </div>
+          <p class="err" id="e-instalmentBudget"></p>
         </div>
         <div class="field">
           <label for="f-residualBalloon">Residual / balloon payment?</label>
-          <input type="text" id="f-residualBalloon" name="residualBalloon" placeholder="e.g. 20%, or 'no balloon'">
+          <input type="text" id="f-residualBalloon" name="residualBalloon" placeholder="e.g. Yes or No">
         </div>
       </div>
 
@@ -208,11 +209,12 @@
           </div>
         </fieldset>
         <fieldset class="field">
-          <legend>Are you a graduate?</legend>
+          <legend>Are you a graduate? <span class="req">Required</span></legend>
           <div class="chips">
             <label class="chip"><input type="radio" name="graduate" value="Yes"><span>Yes</span></label>
             <label class="chip"><input type="radio" name="graduate" value="No"><span>No</span></label>
           </div>
+          <p class="err" id="e-graduate"></p>
         </fieldset>
       </div>
 
@@ -229,17 +231,16 @@
       </div>
 
       <div class="field">
-        <label for="f-email">Email address <span class="req">Required</span></label>
+        <label for="f-email">Email address <span class="opt">Optional</span></label>
         <input type="email" id="f-email" name="email" autocomplete="email" inputmode="email"
-               placeholder="you@example.co.za" required>
+               placeholder="you@example.co.za">
         <p class="err" id="e-email"></p>
       </div>
 
       <div class="field">
-        <label for="f-homeAddress">Home address <span class="req">Required</span></label>
+        <label for="f-homeAddress">Home address <span class="opt">Optional</span></label>
         <textarea id="f-homeAddress" name="homeAddress" rows="2" autocomplete="street-address"
-                  placeholder="Street number and name, complex/unit" required></textarea>
-        <p class="err" id="e-homeAddress"></p>
+                  placeholder="Street number and name, complex/unit"></textarea>
       </div>
 
       <div class="grid-2">
@@ -254,7 +255,7 @@
       </div>
 
       <fieldset class="field">
-        <legend>How long have you lived at this address?</legend>
+        <legend>How long have you lived at this address? <span class="req">Required</span></legend>
         <div class="grid-2 tight">
           <div class="sub-field">
             <label for="f-periodAtAddressYears">Years</label>
@@ -265,16 +266,18 @@
             <input type="number" id="f-periodAtAddressMonths" name="periodAtAddressMonths" min="0" max="11" inputmode="numeric">
           </div>
         </div>
+        <p class="err" id="e-periodAtAddress"></p>
       </fieldset>
 
       <fieldset class="field">
-        <legend>Marital status</legend>
+        <legend>Marital status <span class="req">Required</span></legend>
         <div class="chips">
           <label class="chip"><input type="radio" name="maritalStatus" value="Single"><span>Single</span></label>
           <label class="chip"><input type="radio" name="maritalStatus" value="Married"><span>Married</span></label>
           <label class="chip"><input type="radio" name="maritalStatus" value="Divorced"><span>Divorced</span></label>
           <label class="chip"><input type="radio" name="maritalStatus" value="Widowed"><span>Widowed</span></label>
         </div>
+        <p class="err" id="e-maritalStatus"></p>
       </fieldset>
 
       <div class="reveal" id="rv-married" hidden>
@@ -294,16 +297,30 @@
         </div>
         <div class="grid-2">
           <div class="field">
-            <label for="f-spouseSurname">Spouse's surname</label>
+            <label for="f-spouseSurname">Spouse's surname <span class="req">Required</span></label>
             <input type="text" id="f-spouseSurname" name="spouseSurname">
+            <p class="err" id="e-spouseSurname"></p>
           </div>
           <div class="field">
-            <label for="f-spouseFullNames">Spouse's full name/s</label>
+            <label for="f-spouseFullNames">Spouse's full name/s <span class="req">Required</span></label>
             <input type="text" id="f-spouseFullNames" name="spouseFullNames">
+            <p class="err" id="e-spouseFullNames"></p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="f-spouseCell">Spouse's contact number <span class="req">Required</span></label>
+            <input type="tel" id="f-spouseCell" name="spouseCell" inputmode="tel" placeholder="082 123 4567">
+            <p class="err" id="e-spouseCell"></p>
+          </div>
+          <div class="field">
+            <label for="f-spouseDob">Spouse's date of birth <span class="req">Required</span></label>
+            <input type="date" id="f-spouseDob" name="spouseDob">
+            <p class="err" id="e-spouseDob"></p>
           </div>
         </div>
         <div class="field">
-          <label for="f-spouseId">Spouse's ID number</label>
+          <label for="f-spouseId">Spouse's ID number <span class="opt">Optional</span></label>
           <input type="text" id="f-spouseId" name="spouseId" inputmode="numeric" maxlength="13" autocomplete="off">
           <p class="err" id="e-spouseId"></p>
         </div>
@@ -318,17 +335,35 @@
       </fieldset>
 
       <fieldset class="field">
-        <legend>Do you own property?</legend>
+        <legend>Do you own property? <span class="req">Required</span></legend>
         <div class="chips">
           <label class="chip"><input type="radio" name="ownProperty" value="Yes"><span>Yes</span></label>
           <label class="chip"><input type="radio" name="ownProperty" value="No"><span>No</span></label>
         </div>
+        <p class="err" id="e-ownProperty"></p>
       </fieldset>
 
       <div class="reveal" id="rv-ownProperty" hidden>
         <div class="field">
-          <label for="f-bondedBank">Bonded by which bank?</label>
-          <input type="text" id="f-bondedBank" name="bondedBank" placeholder="e.g. Standard Bank — or 'fully paid'">
+          <label for="f-propertyValue">Estimated property value <span class="req">Required</span></label>
+          <div class="money"><span class="money-r">R</span>
+            <input type="text" id="f-propertyValue" name="propertyValue" inputmode="decimal" data-money>
+          </div>
+          <p class="err" id="e-propertyValue"></p>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="f-bondedBank">Bonded by which bank? <span class="req">Required</span></label>
+            <input type="text" id="f-bondedBank" name="bondedBank" placeholder="e.g. Standard Bank — or 'fully paid'">
+            <p class="err" id="e-bondedBank"></p>
+          </div>
+          <div class="field">
+            <label for="f-outstandingBondValue">Outstanding bond amount <span class="req">Required</span></label>
+            <div class="money"><span class="money-r">R</span>
+              <input type="text" id="f-outstandingBondValue" name="outstandingBondValue" inputmode="decimal" placeholder="0 if fully paid" data-money>
+            </div>
+            <p class="err" id="e-outstandingBondValue"></p>
+          </div>
         </div>
         <fieldset class="field">
           <legend>Whose name is the property in?</legend>
@@ -363,14 +398,14 @@
       </div>
 
       <div class="field">
-        <label for="f-companyName">Company name <span class="req">Required</span></label>
-        <input type="text" id="f-companyName" name="companyName" autocomplete="organization" required>
-        <p class="err" id="e-companyName"></p>
+        <label for="f-companyName">Company name <span class="opt">Optional</span></label>
+        <input type="text" id="f-companyName" name="companyName" autocomplete="organization">
       </div>
 
       <div class="field">
-        <label for="f-companyAddress">Company address</label>
+        <label for="f-companyAddress">Company address <span class="req">Required</span></label>
         <textarea id="f-companyAddress" name="companyAddress" rows="2"></textarea>
+        <p class="err" id="e-companyAddress"></p>
       </div>
 
       <div class="grid-2">
@@ -386,8 +421,9 @@
 
       <div class="grid-2">
         <div class="field">
-          <label for="f-landline">Work landline</label>
+          <label for="f-landline">Work contact number <span class="req">Required</span></label>
           <input type="tel" id="f-landline" name="landline" inputmode="tel">
+          <p class="err" id="e-landline"></p>
         </div>
         <div class="field">
           <label for="f-hrNo">HR / employee number <span class="opt">Optional</span></label>
@@ -397,9 +433,8 @@
 
       <div class="grid-2">
         <div class="field">
-          <label for="f-occupation">Occupation <span class="req">Required</span></label>
-          <input type="text" id="f-occupation" name="occupation" required>
-          <p class="err" id="e-occupation"></p>
+          <label for="f-occupation">Occupation <span class="opt">Optional</span></label>
+          <input type="text" id="f-occupation" name="occupation">
         </div>
         <div class="field">
           <label for="f-industry">Industry</label>
@@ -408,7 +443,7 @@
       </div>
 
       <fieldset class="field">
-        <legend>How long have you worked there?</legend>
+        <legend>How long have you worked there? <span class="req">Required</span></legend>
         <div class="grid-2 tight">
           <div class="sub-field">
             <label for="f-periodAtEmployerYears">Years</label>
@@ -419,20 +454,21 @@
             <input type="number" id="f-periodAtEmployerMonths" name="periodAtEmployerMonths" min="0" max="11" inputmode="numeric">
           </div>
         </div>
+        <p class="err" id="e-periodAtEmployer"></p>
       </fieldset>
 
       <div class="field">
-        <label for="f-salaryDate">What date are you paid each month?</label>
+        <label for="f-salaryDate">What date are you paid each month? <span class="req">Required</span></label>
         <input type="text" id="f-salaryDate" name="salaryDate" placeholder="e.g. 25th, or last working day">
+        <p class="err" id="e-salaryDate"></p>
       </div>
 
       <fieldset class="field callout-field">
-        <legend>Have you received any retrenchment notice in the last 6 months?</legend>
+        <legend>Have you received any retrenchment notice in the last 6 months? <span class="opt">Optional</span></legend>
         <div class="chips">
           <label class="chip"><input type="radio" name="retrenchmentNotice" value="Yes"><span>Yes</span></label>
           <label class="chip"><input type="radio" name="retrenchmentNotice" value="No"><span>No</span></label>
         </div>
-        <p class="err" id="e-retrenchmentNotice"></p>
       </fieldset>
     </section>
 
@@ -442,9 +478,9 @@
       <p class="step-hint">Monthly figures, before and after deductions. These must match your payslip.</p>
 
       <div class="field">
-        <label for="f-grossRemuneration">Gross remuneration <span class="sub">before deductions</span> <span class="req">Required</span></label>
+        <label for="f-grossRemuneration">Gross remuneration <span class="sub">before deductions</span> <span class="opt">Optional</span></label>
         <div class="money"><span class="money-r">R</span>
-          <input type="text" id="f-grossRemuneration" name="grossRemuneration" inputmode="decimal" data-money required>
+          <input type="text" id="f-grossRemuneration" name="grossRemuneration" inputmode="decimal" data-money>
         </div>
         <p class="err" id="e-grossRemuneration"></p>
       </div>
@@ -465,9 +501,9 @@
       </div>
 
       <div class="field">
-        <label for="f-netTakeHome">Net take-home pay <span class="sub">after payslip deductions</span> <span class="req">Required</span></label>
+        <label for="f-netTakeHome">Net take-home pay <span class="sub">after payslip deductions</span> <span class="opt">Optional</span></label>
         <div class="money"><span class="money-r">R</span>
-          <input type="text" id="f-netTakeHome" name="netTakeHome" inputmode="decimal" data-money required>
+          <input type="text" id="f-netTakeHome" name="netTakeHome" inputmode="decimal" data-money>
         </div>
         <p class="err" id="e-netTakeHome"></p>
       </div>
@@ -494,9 +530,10 @@
 
     <!-- ─────────── STEP 6 · EXPENSES ─────────── -->
     <section class="step" data-step="6" data-title="Expenses">
-      <h2>Your monthly expenses</h2>
-      <p class="step-hint">Leave anything that doesn't apply blank. The banks compare these to your bank statements,
-        so honest estimates work in your favour.</p>
+      <h2>Your monthly expenses <span class="req">Required</span></h2>
+      <p class="step-hint">Leave any line that doesn't apply to you blank — but please fill in at least one.
+        The banks compare these to your bank statements, so honest estimates work in your favour.</p>
+      <p class="err" id="e-expenses"></p>
 
       <div class="expense-grid">
         <div class="field"><label for="f-personalLoan">Personal loan repayments</label>
@@ -574,15 +611,14 @@
       <p class="step-hint">The account your salary is paid into.</p>
 
       <div class="field">
-        <label for="f-accountHolder">Account holder <span class="req">Required</span></label>
-        <input type="text" id="f-accountHolder" name="accountHolder" required>
-        <p class="err" id="e-accountHolder"></p>
+        <label for="f-accountHolder">Account holder <span class="opt">Optional</span></label>
+        <input type="text" id="f-accountHolder" name="accountHolder">
       </div>
 
       <div class="grid-2">
         <div class="field">
-          <label for="f-bankName">Bank name <span class="req">Required</span></label>
-          <input type="text" id="f-bankName" name="bankName" list="banks" required>
+          <label for="f-bankName">Bank name <span class="opt">Optional</span></label>
+          <input type="text" id="f-bankName" name="bankName" list="banks">
           <datalist id="banks">
             <option>Absa</option><option>African Bank</option><option>Bidvest Bank</option>
             <option>Capitec</option><option>Discovery Bank</option><option>FNB</option>
@@ -598,8 +634,8 @@
       </div>
 
       <div class="field">
-        <label for="f-accountNo">Account number <span class="req">Required</span></label>
-        <input type="text" id="f-accountNo" name="accountNo" inputmode="numeric" autocomplete="off" required>
+        <label for="f-accountNo">Account number <span class="opt">Optional</span></label>
+        <input type="text" id="f-accountNo" name="accountNo" inputmode="numeric" autocomplete="off">
         <p class="err" id="e-accountNo"></p>
       </div>
 

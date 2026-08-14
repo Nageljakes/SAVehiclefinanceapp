@@ -90,6 +90,11 @@
 
   /* ══════════ Helpers ══════════ */
 
+  const checkedVal = (name) => {
+    const el = form.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '';
+  };
+
   const num = (v) => {
     const n = parseFloat(String(v == null ? '' : v).replace(/[^\d.-]/g, ''));
     return isNaN(n) ? 0 : n;
@@ -302,17 +307,13 @@
       $$(`input[name="${name}"]`).forEach(el => el.addEventListener('change', fn));
       fn();
     };
-    const val = (name) => {
-      const el = form.querySelector(`input[name="${name}"]:checked`);
-      return el ? el.value : '';
-    };
 
-    on('citizenship',    () => reveal('citizenship', val('citizenship') === 'Other'));
-    on('langPref',       () => reveal('langPref',    val('langPref') === 'Other'));
-    on('maritalStatus',  () => reveal('married',     val('maritalStatus') === 'Married'));
-    on('ownProperty',    () => reveal('ownProperty', val('ownProperty') === 'Yes'));
-    on('employmentType', () => reveal('selfEmployed', val('employmentType') === 'Self-employed'));
-    on('accountType',    () => reveal('accountType', val('accountType') === 'Other'));
+    on('citizenship',    () => reveal('citizenship', checkedVal('citizenship') === 'Other'));
+    on('langPref',       () => reveal('langPref',    checkedVal('langPref') === 'Other'));
+    on('maritalStatus',  () => reveal('married',     checkedVal('maritalStatus') === 'Married'));
+    on('ownProperty',    () => reveal('ownProperty', checkedVal('ownProperty') === 'Yes'));
+    on('employmentType', () => reveal('selfEmployed', checkedVal('employmentType') === 'Self-employed'));
+    on('accountType',    () => reveal('accountType', checkedVal('accountType') === 'Other'));
 
     // Declarations: an unticked box means "this one isn't true for me",
     // which the bank needs explained rather than treated as an error.
@@ -546,6 +547,7 @@
       } else if (!$('#f-vehicleDerivative').value) {
         return err('vehicleDerivative', 'Please choose a derivative, or "not sure yet".');
       }
+      if (num($('#f-instalmentBudget').value) <= 0) return err('instalmentBudget', 'Please enter your instalment budget.');
     },
     2: () => {
       const v = $('#f-idNumber').value.trim();
@@ -565,31 +567,56 @@
       if ($('#f-surname').value.trim().length < 2)   return err('surname', 'Please enter your surname.');
       if ($('#f-fullNames').value.trim().length < 2) return err('fullNames', 'Please enter your full names.');
       if ($('#f-cell').value.replace(/\D/g, '').length < 9) return err('cell', 'Please enter a valid cell number.');
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test($('#f-email').value.trim()))
-        return err('email', 'Please enter a valid email address.');
-      if ($('#f-homeAddress').value.trim().length < 5) return err('homeAddress', 'Please enter your home address.');
-      const sp = $('#f-spouseId');
-      if (!$('#rv-married').hidden && sp.value.trim() && !parseSaId(sp.value).ok)
-        return err('spouseId', "That spouse ID number doesn't check out.");
+      const email = $('#f-email').value.trim();
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email))
+        return err('email', 'Please enter a valid email address, or leave it blank.');
+
+      if (!checkedVal('graduate')) return err('graduate', 'Please answer the graduate question.');
+
+      if (!$('#f-periodAtAddressYears').value && !$('#f-periodAtAddressMonths').value)
+        return err('periodAtAddress', 'Please tell us how long you have lived at this address.');
+
+      if (!checkedVal('maritalStatus')) return err('maritalStatus', 'Please answer the marital status question.');
+
+      if (checkedVal('maritalStatus') === 'Married') {
+        if ($('#f-spouseSurname').value.trim().length < 2)   return err('spouseSurname', "Please enter your spouse's surname.");
+        if ($('#f-spouseFullNames').value.trim().length < 2) return err('spouseFullNames', "Please enter your spouse's full names.");
+        if ($('#f-spouseCell').value.replace(/\D/g, '').length < 9) return err('spouseCell', "Please enter your spouse's contact number.");
+        if (!$('#f-spouseDob').value) return err('spouseDob', "Please enter your spouse's date of birth.");
+        const sp = $('#f-spouseId');
+        if (sp.value.trim() && !parseSaId(sp.value).ok) return err('spouseId', "That spouse ID number doesn't check out.");
+      }
+
+      if (!checkedVal('ownProperty')) return err('ownProperty', 'Please answer the property ownership question.');
+
+      if (checkedVal('ownProperty') === 'Yes') {
+        if (num($('#f-propertyValue').value) <= 0) return err('propertyValue', 'Please enter the property value.');
+        if ($('#f-bondedBank').value.trim().length < 2) return err('bondedBank', "Please tell us which bank, or write 'fully paid'.");
+        if ($('#f-outstandingBondValue').value.trim() === '')
+          return err('outstandingBondValue', 'Please enter the outstanding amount, or 0 if fully paid.');
+      }
     },
     4: () => {
-      if ($('#f-companyName').value.trim().length < 2) return err('companyName', "Please enter your employer's name.");
-      if ($('#f-occupation').value.trim().length < 2)  return err('occupation', 'Please enter your occupation.');
-      if (!form.querySelector('input[name="retrenchmentNotice"]:checked'))
-        return err('retrenchmentNotice', 'Please answer the retrenchment question.');
+      if (!$('#f-periodAtEmployerYears').value && !$('#f-periodAtEmployerMonths').value)
+        return err('periodAtEmployer', 'Please tell us how long you have worked there.');
+      if ($('#f-landline').value.replace(/\D/g, '').length < 9) return err('landline', 'Please enter a work contact number.');
+      if ($('#f-salaryDate').value.trim().length < 1) return err('salaryDate', 'Please tell us your salary date.');
+      if ($('#f-companyAddress').value.trim().length < 5) return err('companyAddress', 'Please enter your work address.');
     },
     5: () => {
-      if (num($('#f-grossRemuneration').value) <= 0) return err('grossRemuneration', 'Please enter your gross monthly income.');
-      if (num($('#f-netTakeHome').value) <= 0)       return err('netTakeHome', 'Please enter your net take-home pay.');
-      if (num($('#f-netTakeHome').value) > num($('#f-grossRemuneration').value))
+      const gross = num($('#f-grossRemuneration').value), net = num($('#f-netTakeHome').value);
+      if (gross > 0 && net > 0 && net > gross)
         return err('netTakeHome', 'Net pay cannot be more than gross — please check both figures.');
     },
-    6: () => {},
-    7: () => {
-      if ($('#f-accountHolder').value.trim().length < 2) return err('accountHolder', "Please enter the account holder's name.");
-      if ($('#f-bankName').value.trim().length < 2)      return err('bankName', 'Please enter your bank.');
-      if ($('#f-accountNo').value.replace(/\D/g, '').length < 6) return err('accountNo', 'Please enter your account number.');
+    6: () => {
+      const total = $$('input[data-expense]').reduce((s, el) => s + num(el.value), 0);
+      if (total <= 0) {
+        $('#e-expenses').textContent = 'Please fill in at least one monthly expense.';
+        return 'expenses';
+      }
+      $('#e-expenses').textContent = '';
     },
+    7: () => {},
     8: () => {
       if ($('#f-relSurname').value.trim().length < 2)   return err('relSurname', "Please enter the relative's surname.");
       if ($('#f-relFullNames').value.trim().length < 2) return err('relFullNames', "Please enter the relative's full names.");
