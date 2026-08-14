@@ -70,9 +70,31 @@
       <p class="step-hint">Tell us what you're after. Rough numbers are fine at this stage.</p>
 
       <div class="field">
-        <label for="f-vehicle">Vehicle you're interested in</label>
-        <input type="text" id="f-vehicle" name="vehicle" placeholder="e.g. Nissan Magnite 1.0 Acenta" required>
-        <p class="err" id="e-vehicle"></p>
+        <label for="f-vehicleModel">Vehicle you're interested in <span class="req">Required</span></label>
+        <select id="f-vehicleModel" name="vehicleModel" required>
+          <option value="">Select a model</option>
+          <option value="Magnite">Nissan Magnite</option>
+          <option value="Navara Single Cab">Nissan Navara Single Cab</option>
+          <option value="Navara Double Cab">Nissan Navara Double Cab</option>
+          <option value="X-Trail">Nissan X-Trail</option>
+          <option value="Other">Other / not listed here</option>
+        </select>
+        <p class="err" id="e-vehicleModel"></p>
+      </div>
+
+      <div class="field" id="rv-vehicleDerivative" hidden>
+        <label for="f-vehicleDerivative">Which derivative?</label>
+        <select id="f-vehicleDerivative" name="vehicleDerivative">
+          <option value="">Select a derivative</option>
+        </select>
+        <p class="hint">Prices shown are Nissan's recommended retail, effective 21 July 2026 — your final price may differ.</p>
+        <p class="err" id="e-vehicleDerivative"></p>
+      </div>
+
+      <div class="field" id="rv-vehicleOther" hidden>
+        <label for="f-vehicleOther">Which vehicle?</label>
+        <input type="text" id="f-vehicleOther" name="vehicleOther" placeholder="e.g. Nissan Patrol, or a used vehicle in stock">
+        <p class="err" id="e-vehicleOther"></p>
       </div>
 
       <div class="grid-2">

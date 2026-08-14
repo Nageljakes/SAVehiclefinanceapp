@@ -155,7 +155,7 @@ const TEXT_FIELDS = {
 };
 
 const MONEY_FIELDS = [
-  'instalmentBudget', 'grossRemuneration', 'monthlyCommission', 'carAllowance',
+  'vehiclePrice', 'instalmentBudget', 'grossRemuneration', 'monthlyCommission', 'carAllowance',
   'netTakeHome', 'otherIncome', 'totalMonthlyIncome',
   'personalLoan', 'vehicleInstalments', 'policyInsurance', 'ratesWaterElectricity',
   'bondRent', 'creditCard', 'furnitureAccounts', 'clothingAccounts', 'overdraft',
@@ -373,6 +373,7 @@ function sections(r) {
 
   s.push(['Wish list', [
     ['Vehicle', dash(r.vehicle)],
+    ['Vehicle price (RRP)', r.vehiclePrice ? R(r.vehiclePrice) : '—'],
     ['Instalment budget', r.instalmentBudget ? R(r.instalmentBudget) : '—'],
     ['Residual / balloon', dash(r.residualBalloon)],
     ['Trade-in', dash(r.tradeIn)]

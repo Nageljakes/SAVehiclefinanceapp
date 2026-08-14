@@ -20,6 +20,53 @@
   };
   /* ════════════════════════════════════════════════════ */
 
+  // Nissan recommended retail price list, effective 21 July 2026 (run-out
+  // models already excluded). Commercial variants (e.g. Magnite Move panel
+  // van) are left out — this form is for individual retail applicants.
+  // Update this block whenever the dealership gets a new price list.
+  const VEHICLE_CATALOG = {
+    'Magnite': [
+      { name: 'Magnite 1.0 Visia MT', price: 252200 },
+      { name: 'Magnite 1.0 Visia AMT', price: 269200 },
+      { name: 'Magnite 1.0 Acenta MT', price: 277300 },
+      { name: 'Magnite 1.0 Acenta AMT', price: 294400 },
+      { name: 'Magnite 1.0T Visia MT', price: 301900 },
+      { name: 'Magnite 1.0T Acenta MT', price: 329900 },
+      { name: 'Magnite 1.0T Acenta CVT', price: 344900 },
+      { name: 'Magnite 1.0T KURO CVT', price: 352900 },
+      { name: 'Magnite 1.0T Acenta Plus CVT', price: 370900 }
+    ],
+    'Navara Single Cab': [
+      { name: 'Navara 2.5D XE MT SC', price: 427100 },
+      { name: 'Navara 2.5D XE MT SC (MY25)', price: 433500 },
+      { name: 'Navara 2.5D SE MT SC', price: 510400 },
+      { name: 'Navara 2.5D 4x4 SE MT SC', price: 592600 }
+    ],
+    'Navara Double Cab': [
+      { name: 'Navara 2.5D XE MT DC', price: 493600 },
+      { name: 'Navara 2.5D 4x4 XE MT DC', price: 567000 },
+      { name: 'Navara 2.5D SE Plus MT DC', price: 595000 },
+      { name: 'Navara 2.5D SE Plus AT DC', price: 618200 },
+      { name: 'Navara 2.5D LE AT DC', price: 660200 },
+      { name: 'Navara 2.5D 4x4 SE Plus MT DC', price: 678000 },
+      { name: 'Navara 2.5D Stealth AT DC', price: 695200 },
+      { name: 'Navara 2.5D LE Plus AT DC', price: 703800 },
+      { name: 'Navara 2.5D 4x4 LE AT DC', price: 744200 },
+      { name: 'Navara 2.5D 4x4 Stealth AT DC', price: 779200 },
+      { name: 'Navara 2.5D PRO-2X AT DC', price: 782200 },
+      { name: 'Navara 2.5D 4x4 LE Plus AT DC', price: 785700 },
+      { name: 'Navara 2.5D 4x4 PRO-4X AT DC', price: 844000 },
+      { name: 'Navara 2.5D 4x4 PRO-4X Warrior AT DC', price: 924000 }
+    ],
+    'X-Trail': [
+      { name: 'X-Trail 2.5 Visia CVT', price: 699000 },
+      { name: 'X-Trail 2.5 Acenta CVT', price: 763900 },
+      { name: 'X-Trail 2.5 Acenta Plus CVT 7s 4WD (MY25)', price: 812900 },
+      { name: 'X-Trail 2.5 Acenta Plus CVT 7s 4WD', price: 824900 }
+    ]
+  };
+  const VEHICLE_UNSURE = '__unsure__';
+
   const MAX_FILE_BYTES  = 4  * 1024 * 1024;   // per document
   const MAX_TOTAL_BYTES = 12 * 1024 * 1024;   // all documents together
   const DRAFT_KEY = 'bb_finance_draft_v1';
@@ -187,6 +234,59 @@
         ? 'your expenses exceed your income — please double-check'
         : 'income less expenses, before the new instalment';
     }
+  }
+
+  /* ══════════ Vehicle picker ══════════ */
+
+  // Two steps — model line, then the real derivative and price from the
+  // price list — because "Vehicle interested in" free text is what the
+  // paper form asks for, but a fixed model + derivative is what the finance
+  // desk can actually act on. `preselect` re-applies a derivative restored
+  // from a saved draft, since the <option>s below don't exist until now.
+  function wireVehiclePicker(preselect) {
+    const modelSel = $('#f-vehicleModel');
+    const derivWrap = $('#rv-vehicleDerivative');
+    const derivSel = $('#f-vehicleDerivative');
+    const otherWrap = $('#rv-vehicleOther');
+    const otherInput = $('#f-vehicleOther');
+
+    function populate(model) {
+      derivSel.innerHTML = '<option value="">Select a derivative</option>';
+      (VEHICLE_CATALOG[model] || []).forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.name;
+        opt.textContent = `${v.name} — ${rand(v.price)}`;
+        derivSel.appendChild(opt);
+      });
+      const unsure = document.createElement('option');
+      unsure.value = VEHICLE_UNSURE;
+      unsure.textContent = `Not sure yet — any ${model} derivative`;
+      derivSel.appendChild(unsure);
+    }
+
+    function sync(keepDerivative) {
+      const model = modelSel.value;
+      setError('vehicleModel', '');
+      if (model === 'Other') {
+        derivWrap.hidden = true;
+        otherWrap.hidden = false;
+        derivSel.value = '';
+      } else if (model) {
+        populate(model);
+        if (keepDerivative) derivSel.value = keepDerivative;
+        derivWrap.hidden = false;
+        otherWrap.hidden = true;
+      } else {
+        derivWrap.hidden = true;
+        otherWrap.hidden = true;
+      }
+    }
+
+    modelSel.addEventListener('change', () => { sync(); saveDraft(); });
+    derivSel.addEventListener('change', () => setError('vehicleDerivative', ''));
+    otherInput.addEventListener('input', () => setError('vehicleOther', ''));
+
+    sync(preselect);
   }
 
   /* ══════════ Conditional sections ══════════ */
@@ -409,6 +509,28 @@
       else { d[el.name] = el.value.trim(); }
     });
 
+    // Resolve the two-step picker into the single "vehicle" string and price
+    // the backend and email expect — d.vehicleModel/Derivative/Other stay in
+    // the object too, since the draft needs them to restore the picker.
+    const pickedModel = $('#f-vehicleModel').value;
+    if (pickedModel === 'Other') {
+      d.vehicle = $('#f-vehicleOther').value.trim();
+      d.vehiclePrice = 0;
+    } else if (pickedModel) {
+      const derivName = $('#f-vehicleDerivative').value;
+      if (!derivName || derivName === VEHICLE_UNSURE) {
+        d.vehicle = `${pickedModel} — derivative not yet decided`;
+        d.vehiclePrice = 0;
+      } else {
+        d.vehicle = derivName;
+        const match = (VEHICLE_CATALOG[pickedModel] || []).find(v => v.name === derivName);
+        d.vehiclePrice = match ? match.price : 0;
+      }
+    } else {
+      d.vehicle = '';
+      d.vehiclePrice = 0;
+    }
+
     d.totalMonthlyIncome   = num($('#f-netTakeHome').value) + num($('#f-otherIncome').value);
     d.totalMonthlyExpenses = $$('input[data-expense]').reduce((s, el) => s + num(el.value), 0);
     d.monthlySurplus       = d.totalMonthlyIncome - d.totalMonthlyExpenses;
@@ -429,7 +551,13 @@
 
   const RULES = {
     1: () => {
-      if ($('#f-vehicle').value.trim().length < 2) return err('vehicle', 'Please tell us which vehicle you have in mind.');
+      const model = $('#f-vehicleModel').value;
+      if (!model) return err('vehicleModel', 'Please choose a vehicle.');
+      if (model === 'Other') {
+        if ($('#f-vehicleOther').value.trim().length < 2) return err('vehicleOther', 'Please tell us which vehicle you have in mind.');
+      } else if (!$('#f-vehicleDerivative').value) {
+        return err('vehicleDerivative', 'Please choose a derivative, or "not sure yet".');
+      }
     },
     2: () => {
       const v = $('#f-idNumber').value.trim();
@@ -611,6 +739,12 @@
     if (data.company_website) { finishSuccess(null); return; }
     delete data.company_website;
 
+    // The picker's raw selections only matter for restoring a draft — the
+    // backend gets the resolved vehicle/vehiclePrice pair instead.
+    delete data.vehicleModel;
+    delete data.vehicleDerivative;
+    delete data.vehicleOther;
+
     try {
       data.attachments = await Promise.all(files.map(readAsBase64));
     } catch (e) {
@@ -688,6 +822,7 @@
     }
 
     wireConditionals();
+    wireVehiclePicker(draft && draft.vehicleDerivative);
     recalc();
 
     $('#start-btn').addEventListener('click', () => {

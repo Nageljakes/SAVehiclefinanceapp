@@ -157,6 +157,15 @@ input:focus, textarea:focus, select:focus {
 }
 input.invalid, textarea.invalid { border-color: var(--bad); background: #fffafa; }
 
+select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7783'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .85rem center;
+  background-size: 1.1em;
+  padding-right: 2.4rem;
+}
+select.invalid { border-color: var(--bad); background-color: #fffafa; }
+
 .hint { font-size: .82rem; color: var(--muted); margin-top: .35rem; }
 .err { font-size: .82rem; color: var(--bad); font-weight: 500; margin-top: .3rem; min-height: 0; }
 .err:empty { display: none; }
