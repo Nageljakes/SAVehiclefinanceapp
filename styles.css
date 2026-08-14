@@ -4,8 +4,13 @@
    ========================================================== */
 
 :root {
-  --red:      #c3002f;
-  --red-dark: #9c0026;
+  /* Sampled directly from the BB Motor Group logo (it's designed for a dark
+     background — MOTOR/SINCE 1959/the URL are all white ink, invisible on
+     white — so the masthead and footer below go dark to match). */
+  --red:      #ba122b;
+  --red-dark: #8f0e21;
+  --dark:     #15171b;
+  --dark-2:   #24272c;
   --ink:      #14181d;
   --ink-2:    #3d4650;
   --muted:    #6b7783;
@@ -46,8 +51,8 @@ body {
 
 /* ── Masthead ─────────────────────────────────────────── */
 .masthead {
-  background: #fff;
-  border-bottom: 1px solid var(--line);
+  background: var(--dark);
+  border-bottom: 1px solid rgba(255,255,255,.08);
   position: sticky; top: 0; z-index: 30;
 }
 .masthead-in {
@@ -55,16 +60,17 @@ body {
   gap: 1rem; padding-top: .8rem; padding-bottom: .8rem;
 }
 .brand { display: flex; align-items: center; gap: .75rem; min-width: 0; }
-.brand-logo { height: 34px; width: auto; }
+.brand-logo { height: 42px; width: auto; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
-.brand-name { font-weight: 700; font-size: 1rem; letter-spacing: -.01em; }
-.brand-sub { font-size: .72rem; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+.brand-name { font-weight: 700; font-size: 1rem; letter-spacing: -.01em; color: #fff; }
+.brand-sub { font-size: .72rem; color: rgba(255,255,255,.55); letter-spacing: .04em; text-transform: uppercase; }
 .masthead-contact { display: flex; gap: .5rem; flex-shrink: 0; }
 .masthead-contact a {
-  font-size: .82rem; font-weight: 600; color: var(--ink-2); text-decoration: none;
-  border: 1px solid var(--line); border-radius: 999px; padding: .38rem .8rem; white-space: nowrap;
+  font-size: .82rem; font-weight: 600; color: rgba(255,255,255,.85); text-decoration: none;
+  border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.04);
+  border-radius: 999px; padding: .38rem .8rem; white-space: nowrap; transition: all .15s;
 }
-.masthead-contact a:hover { border-color: var(--red); color: var(--red); }
+.masthead-contact a:hover { border-color: var(--red); background: var(--red); color: #fff; }
 @media (max-width: 520px) {
   .masthead-contact a:first-child { display: none; }
   .brand-sub { font-size: .66rem; }
@@ -324,12 +330,12 @@ select.invalid { border-color: var(--bad); background-color: #fffafa; }
 
 /* ── Footer ───────────────────────────────────────────── */
 .foot {
-  border-top: 1px solid var(--line); background: #fff;
-  padding: 1.6rem 0 2.4rem; font-size: .82rem; color: var(--muted);
+  border-top: 1px solid rgba(255,255,255,.08); background: var(--dark);
+  padding: 1.6rem 0 2.4rem; font-size: .82rem; color: rgba(255,255,255,.6);
 }
 .foot p { margin-bottom: .5rem; }
 .foot-sm { font-size: .78rem; line-height: 1.6; }
-.foot a { color: var(--red); }
+.foot a { color: #ff5c73; }
 
 /* Honeypot */
 .hp { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
