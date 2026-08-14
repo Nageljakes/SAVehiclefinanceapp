@@ -1,0 +1,30 @@
+name = "bbfinance"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+# Where completed applications are emailed. Comma-separate for more than one.
+NOTIFY_EMAIL = "nageljakes@gmail.com"
+
+# Must be a Resend-verified sender. onboarding@resend.dev works immediately
+# for testing, but only delivers to the address that owns the Resend account —
+# verify your own domain before going live.
+FROM_EMAIL = "Nissan Gezina Finance <onboarding@resend.dev>"
+
+# Restrict which sites may post to this Worker. Leave blank to allow any origin.
+ALLOWED_ORIGINS = "https://nageljakes.github.io"
+
+# "true" keeps unredacted copies (ID and account numbers) in KV for 90 days.
+# Left off, KV holds a masked copy only and email remains the system of record.
+STORE_FULL = "false"
+
+# Optional. Enables rate limiting and the stored copy.
+# Create with:  npx wrangler kv namespace create APPLICATIONS
+# then paste the id below and uncomment.
+# [[kv_namespaces]]
+# binding = "APPLICATIONS"
+# id = "paste-the-id-here"
+
+# Secrets — set these with `npx wrangler secret put NAME`, never in this file:
+#   RESEND_API_KEY     required
+#   TURNSTILE_SECRET   optional

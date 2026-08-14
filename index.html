@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Individual Application for Finance — Nissan Gezina</title>
+<meta name="description" content="Apply for vehicle finance online. Takes about 10 minutes — your answers save as you go.">
+<meta name="theme-color" content="#c3002f">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#form">Skip to the application</a>
+
+<header class="masthead">
+  <div class="wrap masthead-in">
+    <div class="brand">
+      <!-- Drop a logo at assets/logo.png and it replaces this wordmark automatically. -->
+      <img src="assets/logo.png" alt="Nissan Gezina" class="brand-logo" onerror="this.remove()">
+      <div class="brand-text">
+        <span class="brand-name">Nissan Gezina</span>
+        <span class="brand-sub">BB Motor Group &middot; FSP 49995</span>
+      </div>
+    </div>
+    <div class="masthead-contact">
+      <a class="js-tel" href="#">Call us</a>
+      <a class="js-whatsapp" href="#" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="form">
+
+  <!-- ══════════ INTRO ══════════ -->
+  <section class="intro" id="intro">
+    <h1>Individual Application for Finance</h1>
+    <p class="lede">Everything the banks need, in one form. It takes about 10&nbsp;minutes, and your answers are
+      saved on this device as you go — so you can stop and come back.</p>
+    <ul class="intro-points">
+      <li><strong>Have ready:</strong> your ID number, your latest payslip, and your banking details.</li>
+      <li><strong>Optional but faster:</strong> upload your ID, payslips, 3&nbsp;months' bank statements and proof of address at the end.</li>
+      <li><strong>Your details go straight to our finance desk</strong> — they are not shown to anyone else on this site.</li>
+    </ul>
+    <button type="button" class="btn btn-primary btn-lg" id="start-btn">Start my application</button>
+    <p class="intro-resume" id="resume-note" hidden>
+      We found a saved application on this device. <button type="button" class="linkish" id="clear-draft">Start fresh instead</button>
+    </p>
+  </section>
+
+  <!-- ══════════ PROGRESS ══════════ -->
+  <div class="progress" id="progress" hidden>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-meta">
+      <span id="progress-label">Step 1 of 9</span>
+      <span id="progress-pct">0%</span>
+    </div>
+  </div>
+
+  <form id="app-form" novalidate hidden autocomplete="on">
+
+    <!-- Honeypot — real people never see this -->
+    <div class="hp" aria-hidden="true">
+      <label>Company website<input type="text" name="company_website" id="f-hp" tabindex="-1" autocomplete="off"></label>
+    </div>
+
+    <!-- ─────────── STEP 1 · WISH LIST ─────────── -->
+    <section class="step" data-step="1" data-title="Your wish list">
+      <h2>Your wish list</h2>
+      <p class="step-hint">Tell us what you're after. Rough numbers are fine at this stage.</p>
+
+      <div class="field">
+        <label for="f-vehicle">Vehicle you're interested in</label>
+        <input type="text" id="f-vehicle" name="vehicle" placeholder="e.g. Nissan Magnite 1.0 Acenta" required>
+        <p class="err" id="e-vehicle"></p>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-instalmentBudget">Instalment budget per month</label>
+          <div class="money"><span class="money-r">R</span>
+            <input type="text" id="f-instalmentBudget" name="instalmentBudget" inputmode="decimal" placeholder="4 500" data-money>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-residualBalloon">Residual / balloon payment?</label>
+          <input type="text" id="f-residualBalloon" name="residualBalloon" placeholder="e.g. 20%, or 'no balloon'">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-tradeIn">Do you have a trade-in? <span class="opt">Optional</span></label>
+        <input type="text" id="f-tradeIn" name="tradeIn" placeholder="e.g. 2018 Polo Vivo 1.4, 96 000 km — or leave blank">
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 2 · APPLICANT TYPE ─────────── -->
+    <section class="step" data-step="2" data-title="Identity">
+      <h2>Identity</h2>
+      <p class="step-hint">This is what the banks use to pull your credit profile, so please check it carefully.</p>
+
+      <div class="field">
+        <label for="f-idNumber">SA ID number <span class="req">Required</span></label>
+        <input type="text" id="f-idNumber" name="idNumber" inputmode="numeric" maxlength="13"
+               autocomplete="off" placeholder="13 digits" required>
+        <p class="hint" id="id-derived"></p>
+        <p class="err" id="e-idNumber"></p>
+      </div>
+
+      <fieldset class="field">
+        <legend>Citizenship</legend>
+        <div class="chips" data-radio="citizenship">
+          <label class="chip"><input type="radio" name="citizenship" value="SA citizen" checked><span>SA citizen</span></label>
+          <label class="chip"><input type="radio" name="citizenship" value="Other"><span>Other</span></label>
+        </div>
+      </fieldset>
+
+      <div class="reveal" id="rv-citizenship" hidden>
+        <div class="grid-2">
+          <div class="field">
+            <label for="f-countryOfResidence">Country of residence</label>
+            <input type="text" id="f-countryOfResidence" name="countryOfResidence">
+          </div>
+          <div class="field">
+            <label for="f-permitType">Permit type</label>
+            <input type="text" id="f-permitType" name="permitType" placeholder="e.g. Permanent residence, Work permit">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-passportNumber">Passport number <span class="opt">If you used a passport above</span></label>
+          <input type="text" id="f-passportNumber" name="passportNumber" autocomplete="off">
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>Language preference</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="langPref" value="English" checked><span>English</span></label>
+          <label class="chip"><input type="radio" name="langPref" value="Afrikaans"><span>Afrikaans</span></label>
+          <label class="chip"><input type="radio" name="langPref" value="Other"><span>Other</span></label>
+        </div>
+      </fieldset>
+      <div class="reveal" id="rv-langPref" hidden>
+        <div class="field">
+          <label for="f-langOther">Which language?</label>
+          <input type="text" id="f-langOther" name="langOther">
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>Population group <span class="opt">For statutory reporting</span></legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="ethnicGroup" value="African"><span>African</span></label>
+          <label class="chip"><input type="radio" name="ethnicGroup" value="Coloured"><span>Coloured</span></label>
+          <label class="chip"><input type="radio" name="ethnicGroup" value="Indian/Asian"><span>Indian / Asian</span></label>
+          <label class="chip"><input type="radio" name="ethnicGroup" value="White"><span>White</span></label>
+          <label class="chip"><input type="radio" name="ethnicGroup" value="Prefer not to say"><span>Prefer not to say</span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <!-- ─────────── STEP 3 · YOUR DETAILS ─────────── -->
+    <section class="step" data-step="3" data-title="Your details">
+      <h2>Your details</h2>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-surname">Surname <span class="req">Required</span></label>
+          <input type="text" id="f-surname" name="surname" autocomplete="family-name" required>
+          <p class="err" id="e-surname"></p>
+        </div>
+        <div class="field">
+          <label for="f-fullNames">Full name/s <span class="req">Required</span></label>
+          <input type="text" id="f-fullNames" name="fullNames" autocomplete="given-name" required
+                 placeholder="As they appear on your ID">
+          <p class="err" id="e-fullNames"></p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <fieldset class="field">
+          <legend>Gender</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="gender" value="Male"><span>Male</span></label>
+            <label class="chip"><input type="radio" name="gender" value="Female"><span>Female</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="field">
+          <legend>Are you a graduate?</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="graduate" value="Yes"><span>Yes</span></label>
+            <label class="chip"><input type="radio" name="graduate" value="No"><span>No</span></label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-cell">Cell number <span class="req">Required</span></label>
+          <input type="tel" id="f-cell" name="cell" autocomplete="tel" inputmode="tel" placeholder="082 123 4567" required>
+          <p class="err" id="e-cell"></p>
+        </div>
+        <div class="field">
+          <label for="f-homeTel">Home tel <span class="opt">Optional</span></label>
+          <input type="tel" id="f-homeTel" name="homeTel" inputmode="tel" placeholder="012 345 6789">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-email">Email address <span class="req">Required</span></label>
+        <input type="email" id="f-email" name="email" autocomplete="email" inputmode="email"
+               placeholder="you@example.co.za" required>
+        <p class="err" id="e-email"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-homeAddress">Home address <span class="req">Required</span></label>
+        <textarea id="f-homeAddress" name="homeAddress" rows="2" autocomplete="street-address"
+                  placeholder="Street number and name, complex/unit" required></textarea>
+        <p class="err" id="e-homeAddress"></p>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-suburb">Suburb</label>
+          <input type="text" id="f-suburb" name="suburb" autocomplete="address-level2">
+        </div>
+        <div class="field">
+          <label for="f-postalCode">Postal code</label>
+          <input type="text" id="f-postalCode" name="postalCode" inputmode="numeric" maxlength="4" autocomplete="postal-code">
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>How long have you lived at this address?</legend>
+        <div class="grid-2 tight">
+          <div class="sub-field">
+            <label for="f-periodAtAddressYears">Years</label>
+            <input type="number" id="f-periodAtAddressYears" name="periodAtAddressYears" min="0" max="99" inputmode="numeric">
+          </div>
+          <div class="sub-field">
+            <label for="f-periodAtAddressMonths">Months</label>
+            <input type="number" id="f-periodAtAddressMonths" name="periodAtAddressMonths" min="0" max="11" inputmode="numeric">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Marital status</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="maritalStatus" value="Single"><span>Single</span></label>
+          <label class="chip"><input type="radio" name="maritalStatus" value="Married"><span>Married</span></label>
+          <label class="chip"><input type="radio" name="maritalStatus" value="Divorced"><span>Divorced</span></label>
+          <label class="chip"><input type="radio" name="maritalStatus" value="Widowed"><span>Widowed</span></label>
+        </div>
+      </fieldset>
+
+      <div class="reveal" id="rv-married" hidden>
+        <div class="grid-2">
+          <div class="field">
+            <label for="f-dateMarried">Date married</label>
+            <input type="date" id="f-dateMarried" name="dateMarried">
+          </div>
+          <fieldset class="field">
+            <legend>Marital regime</legend>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="marriageType" value="ANC"><span>ANC</span></label>
+              <label class="chip"><input type="radio" name="marriageType" value="COP"><span>In community</span></label>
+              <label class="chip"><input type="radio" name="marriageType" value="Other"><span>Other</span></label>
+            </div>
+          </fieldset>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="f-spouseSurname">Spouse's surname</label>
+            <input type="text" id="f-spouseSurname" name="spouseSurname">
+          </div>
+          <div class="field">
+            <label for="f-spouseFullNames">Spouse's full name/s</label>
+            <input type="text" id="f-spouseFullNames" name="spouseFullNames">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-spouseId">Spouse's ID number</label>
+          <input type="text" id="f-spouseId" name="spouseId" inputmode="numeric" maxlength="13" autocomplete="off">
+          <p class="err" id="e-spouseId"></p>
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>Do you rent the property you live in?</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="rentProperty" value="Yes"><span>Yes</span></label>
+          <label class="chip"><input type="radio" name="rentProperty" value="No"><span>No</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Do you own property?</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="ownProperty" value="Yes"><span>Yes</span></label>
+          <label class="chip"><input type="radio" name="ownProperty" value="No"><span>No</span></label>
+        </div>
+      </fieldset>
+
+      <div class="reveal" id="rv-ownProperty" hidden>
+        <div class="field">
+          <label for="f-bondedBank">Bonded by which bank?</label>
+          <input type="text" id="f-bondedBank" name="bondedBank" placeholder="e.g. Standard Bank — or 'fully paid'">
+        </div>
+        <fieldset class="field">
+          <legend>Whose name is the property in?</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="bondHolder" value="Applicant"><span>Mine</span></label>
+            <label class="chip"><input type="radio" name="bondHolder" value="Spouse"><span>My spouse's</span></label>
+            <label class="chip"><input type="radio" name="bondHolder" value="Both"><span>Both</span></label>
+          </div>
+        </fieldset>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 4 · EMPLOYMENT ─────────── -->
+    <section class="step" data-step="4" data-title="Employment">
+      <h2>Employment</h2>
+
+      <fieldset class="field">
+        <legend>How are you employed?</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="employmentType" value="Permanently employed" checked><span>Permanently employed</span></label>
+          <label class="chip"><input type="radio" name="employmentType" value="Contract"><span>Contract</span></label>
+          <label class="chip"><input type="radio" name="employmentType" value="Self-employed"><span>Self-employed</span></label>
+          <label class="chip"><input type="radio" name="employmentType" value="Pensioner"><span>Pensioner</span></label>
+        </div>
+      </fieldset>
+
+      <div class="reveal" id="rv-selfEmployed" hidden>
+        <div class="field">
+          <label for="f-selfEmployedNature">Nature of your business</label>
+          <input type="text" id="f-selfEmployedNature" name="selfEmployedNature" placeholder="e.g. Plumbing contractor, sole proprietor">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-companyName">Company name <span class="req">Required</span></label>
+        <input type="text" id="f-companyName" name="companyName" autocomplete="organization" required>
+        <p class="err" id="e-companyName"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-companyAddress">Company address</label>
+        <textarea id="f-companyAddress" name="companyAddress" rows="2"></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-companySuburb">Suburb</label>
+          <input type="text" id="f-companySuburb" name="companySuburb">
+        </div>
+        <div class="field">
+          <label for="f-companyPostalCode">Postal code</label>
+          <input type="text" id="f-companyPostalCode" name="companyPostalCode" inputmode="numeric" maxlength="4">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-landline">Work landline</label>
+          <input type="tel" id="f-landline" name="landline" inputmode="tel">
+        </div>
+        <div class="field">
+          <label for="f-hrNo">HR / employee number <span class="opt">Optional</span></label>
+          <input type="text" id="f-hrNo" name="hrNo">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-occupation">Occupation <span class="req">Required</span></label>
+          <input type="text" id="f-occupation" name="occupation" required>
+          <p class="err" id="e-occupation"></p>
+        </div>
+        <div class="field">
+          <label for="f-industry">Industry</label>
+          <input type="text" id="f-industry" name="industry" placeholder="e.g. Mining, Retail, Government">
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>How long have you worked there?</legend>
+        <div class="grid-2 tight">
+          <div class="sub-field">
+            <label for="f-periodAtEmployerYears">Years</label>
+            <input type="number" id="f-periodAtEmployerYears" name="periodAtEmployerYears" min="0" max="60" inputmode="numeric">
+          </div>
+          <div class="sub-field">
+            <label for="f-periodAtEmployerMonths">Months</label>
+            <input type="number" id="f-periodAtEmployerMonths" name="periodAtEmployerMonths" min="0" max="11" inputmode="numeric">
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="f-salaryDate">What date are you paid each month?</label>
+        <input type="text" id="f-salaryDate" name="salaryDate" placeholder="e.g. 25th, or last working day">
+      </div>
+
+      <fieldset class="field callout-field">
+        <legend>Have you received any retrenchment notice in the last 6 months?</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="retrenchmentNotice" value="Yes"><span>Yes</span></label>
+          <label class="chip"><input type="radio" name="retrenchmentNotice" value="No"><span>No</span></label>
+        </div>
+        <p class="err" id="e-retrenchmentNotice"></p>
+      </fieldset>
+    </section>
+
+    <!-- ─────────── STEP 5 · INCOME ─────────── -->
+    <section class="step" data-step="5" data-title="Income">
+      <h2>Your income</h2>
+      <p class="step-hint">Monthly figures, before and after deductions. These must match your payslip.</p>
+
+      <div class="field">
+        <label for="f-grossRemuneration">Gross remuneration <span class="sub">before deductions</span> <span class="req">Required</span></label>
+        <div class="money"><span class="money-r">R</span>
+          <input type="text" id="f-grossRemuneration" name="grossRemuneration" inputmode="decimal" data-money required>
+        </div>
+        <p class="err" id="e-grossRemuneration"></p>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-monthlyCommission">Monthly commission <span class="sub">included in gross</span></label>
+          <div class="money"><span class="money-r">R</span>
+            <input type="text" id="f-monthlyCommission" name="monthlyCommission" inputmode="decimal" data-money>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-carAllowance">Car allowance <span class="sub">included in gross</span></label>
+          <div class="money"><span class="money-r">R</span>
+            <input type="text" id="f-carAllowance" name="carAllowance" inputmode="decimal" data-money>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-netTakeHome">Net take-home pay <span class="sub">after payslip deductions</span> <span class="req">Required</span></label>
+        <div class="money"><span class="money-r">R</span>
+          <input type="text" id="f-netTakeHome" name="netTakeHome" inputmode="decimal" data-money required>
+        </div>
+        <p class="err" id="e-netTakeHome"></p>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-otherIncome">Income other than salary</label>
+          <div class="money"><span class="money-r">R</span>
+            <input type="text" id="f-otherIncome" name="otherIncome" inputmode="decimal" data-money>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-otherIncomeSource">Source of other income</label>
+          <input type="text" id="f-otherIncomeSource" name="otherIncomeSource" placeholder="e.g. rental income">
+        </div>
+      </div>
+      <p class="hint">If you have other income, please upload supporting documents at the end (e.g. a rental agreement).</p>
+
+      <div class="total-card">
+        <span class="total-label">Total monthly income <span class="sub">net take-home + other income</span></span>
+        <span class="total-value" id="total-income">R 0</span>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 6 · EXPENSES ─────────── -->
+    <section class="step" data-step="6" data-title="Expenses">
+      <h2>Your monthly expenses</h2>
+      <p class="step-hint">Leave anything that doesn't apply blank. The banks compare these to your bank statements,
+        so honest estimates work in your favour.</p>
+
+      <div class="expense-grid">
+        <div class="field"><label for="f-personalLoan">Personal loan repayments</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-personalLoan" name="personalLoan" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-vehicleInstalments">Vehicle instalments <span class="sub">excl. any being settled</span></label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-vehicleInstalments" name="vehicleInstalments" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-policyInsurance">Policy / insurance repayments</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-policyInsurance" name="policyInsurance" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-ratesWaterElectricity">Rates, water and electricity</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-ratesWaterElectricity" name="ratesWaterElectricity" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-bondRent">Bond payment / rent</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-bondRent" name="bondRent" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-creditCard">Credit card repayments</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-creditCard" name="creditCard" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-furnitureAccounts">Furniture accounts</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-furnitureAccounts" name="furnitureAccounts" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-clothingAccounts">Clothing accounts</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-clothingAccounts" name="clothingAccounts" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-overdraft">Overdraft repayments</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-overdraft" name="overdraft" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-telephone">Telephone / cellphone</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-telephone" name="telephone" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-transport">Transport costs</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-transport" name="transport" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-foodEntertainment">Food and entertainment</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-foodEntertainment" name="foodEntertainment" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-education">Education costs</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-education" name="education" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-spousalChildSupport">Spousal / child support</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-spousalChildSupport" name="spousalChildSupport" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-household">Household expenses</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-household" name="household" inputmode="decimal" data-money data-expense></div></div>
+
+        <div class="field"><label for="f-otherExpenses">Other</label>
+          <div class="money"><span class="money-r">R</span><input type="text" id="f-otherExpenses" name="otherExpenses" inputmode="decimal" data-money data-expense></div></div>
+      </div>
+
+      <fieldset class="field">
+        <legend>If you're settling a vehicle, may we draw a settlement letter?</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="settlementLetter" value="Yes"><span>Yes</span></label>
+          <label class="chip"><input type="radio" name="settlementLetter" value="No"><span>No</span></label>
+          <label class="chip"><input type="radio" name="settlementLetter" value="N/A"><span>Not applicable</span></label>
+        </div>
+      </fieldset>
+
+      <div class="total-card">
+        <span class="total-label">Total monthly expenses</span>
+        <span class="total-value" id="total-expenses">R 0</span>
+      </div>
+
+      <div class="total-card total-card-accent" id="surplus-card">
+        <span class="total-label">Left over each month <span class="sub" id="surplus-sub">income less expenses</span></span>
+        <span class="total-value" id="total-surplus">R 0</span>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 7 · BANKING ─────────── -->
+    <section class="step" data-step="7" data-title="Banking">
+      <h2>Banking details</h2>
+      <p class="step-hint">The account your salary is paid into.</p>
+
+      <div class="field">
+        <label for="f-accountHolder">Account holder <span class="req">Required</span></label>
+        <input type="text" id="f-accountHolder" name="accountHolder" required>
+        <p class="err" id="e-accountHolder"></p>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-bankName">Bank name <span class="req">Required</span></label>
+          <input type="text" id="f-bankName" name="bankName" list="banks" required>
+          <datalist id="banks">
+            <option>Absa</option><option>African Bank</option><option>Bidvest Bank</option>
+            <option>Capitec</option><option>Discovery Bank</option><option>FNB</option>
+            <option>Investec</option><option>Nedbank</option><option>Old Mutual Bank</option>
+            <option>Standard Bank</option><option>TymeBank</option>
+          </datalist>
+          <p class="err" id="e-bankName"></p>
+        </div>
+        <div class="field">
+          <label for="f-branchCode">Branch code</label>
+          <input type="text" id="f-branchCode" name="branchCode" inputmode="numeric" maxlength="6">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-accountNo">Account number <span class="req">Required</span></label>
+        <input type="text" id="f-accountNo" name="accountNo" inputmode="numeric" autocomplete="off" required>
+        <p class="err" id="e-accountNo"></p>
+      </div>
+
+      <fieldset class="field">
+        <legend>Account type</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="accountType" value="Cheque"><span>Cheque / current</span></label>
+          <label class="chip"><input type="radio" name="accountType" value="Savings"><span>Savings</span></label>
+          <label class="chip"><input type="radio" name="accountType" value="Other"><span>Other</span></label>
+        </div>
+      </fieldset>
+      <div class="reveal" id="rv-accountType" hidden>
+        <div class="field">
+          <label for="f-accountTypeOther">Which type?</label>
+          <input type="text" id="f-accountTypeOther" name="accountTypeOther">
+        </div>
+      </div>
+
+      <hr class="rule">
+
+      <h3>IDX — consent to obtain your bank statements electronically</h3>
+      <p class="legal">
+        For the purpose of assessing the finance application that the BB Motor Group dealer will submit on your behalf
+        to any or all of the Banks in the name of <strong id="idx-name-echo">the applicant</strong>, the Banks need your
+        consent to obtain your bank statement(s) directly from other financial institutions (as specified below).
+        The Banks will exchange only the bank statements you have authorised, and these will be safeguarded and not used
+        for any purpose other than the finance application for which you have consented. Bank account statements obtained
+        will also be limited to the period necessary to assess the finance application.
+      </p>
+
+      <label class="check check-lg">
+        <input type="checkbox" id="f-idxSameAccount" name="idxSameAccount" checked>
+        <span>The account above is the one to obtain statements from</span>
+      </label>
+
+      <div class="reveal" id="rv-idx" hidden>
+        <div class="grid-2">
+          <div class="field">
+            <label for="f-idxBankName">Name of bank</label>
+            <input type="text" id="f-idxBankName" name="idxBankName">
+          </div>
+          <div class="field">
+            <label for="f-idxAccountNumber">Account number</label>
+            <input type="text" id="f-idxAccountNumber" name="idxAccountNumber" inputmode="numeric" autocomplete="off">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="f-idxAccountType">Account type</label>
+            <input type="text" id="f-idxAccountType" name="idxAccountType">
+          </div>
+          <div class="field">
+            <label for="f-idxBranchNumber">Branch number</label>
+            <input type="text" id="f-idxBranchNumber" name="idxBranchNumber" inputmode="numeric">
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-idxBranchName">Branch name</label>
+          <input type="text" id="f-idxBranchName" name="idxBranchName">
+        </div>
+      </div>
+
+      <label class="check check-lg">
+        <input type="checkbox" id="f-idxConsent" name="idxConsent" required>
+        <span>I consent to the Banks obtaining my bank statements electronically, as described above. <span class="req">Required</span></span>
+      </label>
+      <p class="err" id="e-idxConsent"></p>
+    </section>
+
+    <!-- ─────────── STEP 8 · RELATIVE ─────────── -->
+    <section class="step" data-step="8" data-title="Contact person">
+      <h2>A relative not living with you</h2>
+      <p class="step-hint">The banks require one contactable relative in South Africa who does not live at your address.</p>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-relSurname">Surname <span class="req">Required</span></label>
+          <input type="text" id="f-relSurname" name="relSurname" required>
+          <p class="err" id="e-relSurname"></p>
+        </div>
+        <div class="field">
+          <label for="f-relFullNames">Full name/s <span class="req">Required</span></label>
+          <input type="text" id="f-relFullNames" name="relFullNames" required>
+          <p class="err" id="e-relFullNames"></p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-relAddress">Home address</label>
+        <textarea id="f-relAddress" name="relAddress" rows="2"></textarea>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="f-relCell">Cell number <span class="req">Required</span></label>
+          <input type="tel" id="f-relCell" name="relCell" inputmode="tel" required>
+          <p class="err" id="e-relCell"></p>
+        </div>
+        <div class="field">
+          <label for="f-relationship">Relationship to you</label>
+          <input type="text" id="f-relationship" name="relationship" placeholder="e.g. Sister, Father">
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── STEP 9 · DECLARATIONS ─────────── -->
+    <section class="step" data-step="9" data-title="Declarations">
+      <h2>Declarations and signature</h2>
+      <p class="step-hint">Please read these and confirm. Untick anything that isn't true for you and tell us why —
+        it does not automatically stop your application.</p>
+
+      <button type="button" class="btn btn-ghost btn-sm" id="tick-all">Tick all that apply to me</button>
+
+      <div class="declarations" id="declarations">
+        <label class="check"><input type="checkbox" name="declA" value="A"><span><b>A.</b> I am not a minor.</span></label>
+        <label class="check"><input type="checkbox" name="declB" value="B"><span><b>B.</b> I have never been declared mentally unfit by a court.</span></label>
+        <label class="check"><input type="checkbox" name="declC" value="C"><span><b>C.</b> I am not subject to an Administration Order.</span></label>
+        <label class="check"><input type="checkbox" name="declD" value="D"><span><b>D.</b> I do not have any current application pending for debt restructuring or alleviation.</span></label>
+        <label class="check"><input type="checkbox" name="declE" value="E"><span><b>E.</b> I do not have any current debt re-arrangement in existence.</span></label>
+        <label class="check"><input type="checkbox" name="declF" value="F"><span><b>F.</b> I have not previously applied for a debt re-arrangement.</span></label>
+        <label class="check"><input type="checkbox" name="declG" value="G"><span><b>G.</b> I am not under sequestration.</span></label>
+        <label class="check"><input type="checkbox" name="declH" value="H"><span><b>H.</b> I do not have applications pending for credit, nor open quotations as envisaged in section 92 of the National Credit Act.</span></label>
+      </div>
+
+      <div class="field" id="decl-details-wrap" hidden>
+        <label for="f-declarationExceptions">You left some unticked — please tell us which and give details</label>
+        <textarea id="f-declarationExceptions" name="declarationExceptions" rows="3"
+                  placeholder="e.g. E — I am currently under debt review with XYZ."></textarea>
+        <p class="err" id="e-declarationExceptions"></p>
+      </div>
+
+      <div class="consents">
+        <label class="check check-lg"><input type="checkbox" name="serviceFeeAck" required>
+          <span>I understand that I will be liable for a monthly service fee. <span class="req">Required</span></span></label>
+        <label class="check check-lg"><input type="checkbox" name="creditBureauConsent" required>
+          <span>I consent to this Credit Provider making enquiries about my credit history with any credit bureau. <span class="req">Required</span></span></label>
+        <label class="check check-lg"><input type="checkbox" name="nlrConsent" required>
+          <span>I consent to this Credit Provider reporting the conclusion of any credit agreement with me to the National Loans Register, in compliance with its obligations under the National Credit Act. <span class="req">Required</span></span></label>
+        <label class="check check-lg"><input type="checkbox" name="truthDeclaration" required>
+          <span>I declare that the information I have provided is true and correct. <span class="req">Required</span></span></label>
+        <label class="check check-lg"><input type="checkbox" name="popiaConsent" required>
+          <span>I consent to Nissan Gezina / BB Motor Group processing my personal information for the purpose of this finance application, in line with POPIA. <span class="req">Required</span></span></label>
+      </div>
+      <p class="err" id="e-consents"></p>
+
+      <div class="field">
+        <label>Signature <span class="req">Required</span></label>
+        <p class="hint">Sign with your finger or mouse in the box below.</p>
+        <div class="sigwrap">
+          <canvas id="sigpad" width="900" height="300" aria-label="Signature pad"></canvas>
+          <button type="button" class="sig-clear" id="sig-clear">Clear</button>
+        </div>
+        <p class="err" id="e-signature"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-signedAt">Date</label>
+        <input type="date" id="f-signedAt" name="signedAt" readonly>
+      </div>
+
+      <hr class="rule">
+
+      <h3>Supporting documents <span class="opt">Optional, but it speeds things up a lot</span></h3>
+      <p class="step-hint">ID copy, latest 3 payslips, 3 months' bank statements, proof of address, and a driver's
+        licence copy. Photos from your phone are fine. Max 4&nbsp;MB per file, 12&nbsp;MB in total.</p>
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="f-files" name="files" multiple
+               accept="image/jpeg,image/png,image/heic,image/webp,application/pdf">
+        <p class="dz-label">Tap to choose files, or drag them here</p>
+      </div>
+      <ul class="filelist" id="filelist"></ul>
+      <p class="err" id="e-files"></p>
+    </section>
+
+    <!-- ══════════ NAV ══════════ -->
+    <div class="navbar">
+      <button type="button" class="btn btn-ghost" id="back-btn">Back</button>
+      <p class="save-note" id="save-note">Saved on this device</p>
+      <button type="button" class="btn btn-primary" id="next-btn">Continue</button>
+      <button type="submit" class="btn btn-primary" id="submit-btn" hidden>
+        <span class="btn-label">Submit my application</span>
+      </button>
+    </div>
+    <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+  </form>
+
+  <!-- ══════════ SUCCESS ══════════ -->
+  <section class="success" id="success" hidden>
+    <div class="tick">&#10003;</div>
+    <h2 id="success-title">Thank you — we have your application.</h2>
+    <p id="success-body">Our finance desk has it now and will come back to you within one working day.
+      Please keep your phone nearby — the banks sometimes call to verify a detail.</p>
+    <p class="ref" id="success-ref"></p>
+    <div class="success-acts">
+      <a class="btn btn-primary js-whatsapp" href="#" target="_blank" rel="noopener">WhatsApp us</a>
+      <a class="btn btn-ghost js-tel" href="#">Call the dealership</a>
+    </div>
+  </section>
+
+  <!-- ══════════ FAILURE ══════════ -->
+  <section class="failure" id="failure" hidden>
+    <h2>We couldn't send that through.</h2>
+    <p>Your answers are still saved on this device, so nothing is lost. Please try again in a moment —
+      or call us and we'll take it down over the phone.</p>
+    <div class="success-acts">
+      <button type="button" class="btn btn-primary" id="retry-btn">Try again</button>
+      <a class="btn btn-ghost js-tel" href="#">Call the dealership</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>Nissan Gezina &middot; BB Motor Group &middot; FSP 49995 &middot; NCRCP registered credit provider.</p>
+    <p class="foot-sm">Your information is used only to assess this finance application and is shared with the banks
+      you have consented to. It is not sold or used for marketing. To have your details removed, email
+      <a href="mailto:nageljakes@gmail.com">nageljakes@gmail.com</a>.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
