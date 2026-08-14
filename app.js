@@ -13,9 +13,10 @@
     // Cloudflare Worker that emails the application. See worker/README.md.
     endpoint: 'https://bbfinance.jaxtech.workers.dev/api/application',
 
-    // Dealership contact details, used by the Call / WhatsApp buttons.
-    phone:    '+27 61 511 7494',
-    whatsapp: '27615117494',
+    // Dealership contact details, used by the Call / WhatsApp / Email buttons.
+    phone:    '+27 82 739 8595',
+    whatsapp: '27827398595',
+    email:    'newsales8@bbgezinanissan.co.za',
     waGreeting: "Hi, I'm busy with the online finance application for Nissan Gezina."
   };
   /* ════════════════════════════════════════════════════ */
@@ -704,6 +705,9 @@
                '?text=' + encodeURIComponent(CONFIG.waGreeting);
     $$('.js-whatsapp').forEach(a => { a.href = wa; });
     $$('.js-tel').forEach(a => { a.href = 'tel:' + CONFIG.phone.replace(/[^\d+]/g, ''); });
+    $$('.js-mail').forEach(a => {
+      a.href = 'mailto:' + CONFIG.email + '?subject=' + encodeURIComponent('Finance application — Nissan Gezina');
+    });
   }
 
   /* ══════════ Submit ══════════ */
