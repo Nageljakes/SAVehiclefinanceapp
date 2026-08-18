@@ -33,7 +33,7 @@ export default {
         email: !!env.RESEND_API_KEY,
         storage: !!env.APPLICATIONS,
         turnstile: !!env.TURNSTILE_SECRET,
-        notify: env.NOTIFY_EMAIL || '(default)'
+        notify: !!env.NOTIFY_EMAIL
       });
     }
 
