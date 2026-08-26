@@ -58,7 +58,10 @@ async function handleApplication(request, env, ctx) {
   // Honeypot — bots fill it, people never see it.
   if (data.company_website || data.hp) return json(request, env, { ok: true, id: 'ignored' });
 
-  if (env.TURNSTILE_SECRET && data.turnstileToken) {
+  // Once a Turnstile secret is configured the check is mandatory. Treating a
+  // missing token as "nothing to verify" let anyone skip the gate simply by
+  // leaving the field out of the POST body.
+  if (env.TURNSTILE_SECRET) {
     const ok = await verifyTurnstile(env, data.turnstileToken, request);
     if (!ok) return json(request, env, { error: 'Verification failed — please reload and try again.' }, 403);
   }
@@ -263,7 +266,13 @@ function redact(r) {
 }
 
 async function overRate(env, key) {
-  if (!env.APPLICATIONS) return false;
+  if (!env.APPLICATIONS) {
+    // Not fatal, but never silent: without the KV binding there is no per-IP
+    // ceiling at all, and Turnstile is the only thing standing in front of a
+    // Worker that sends mail on request.
+    console.warn('APPLICATIONS KV is not bound — per-IP rate limiting is INACTIVE.');
+    return false;
+  }
   try {
     const n = parseInt(await env.APPLICATIONS.get(key) || '0', 10);
     if (n >= RATE_MAX) return true;
@@ -275,6 +284,7 @@ async function overRate(env, key) {
 }
 
 async function verifyTurnstile(env, token, request) {
+  if (!token) return false;
   try {
     const body = new FormData();
     body.append('secret', env.TURNSTILE_SECRET);
@@ -285,8 +295,10 @@ async function verifyTurnstile(env, token, request) {
     const out = await res.json();
     return out.success === true;
   } catch (err) {
-    console.error('Turnstile check failed open', err);
-    return true;   // never block a real applicant because Cloudflare was slow
+    // Fail closed. This endpoint mails attacker-supplied addresses from our
+    // own domain, so an outage is a reason to retry, not to wave traffic past.
+    console.error('Turnstile check failed', err);
+    return false;
   }
 }
 

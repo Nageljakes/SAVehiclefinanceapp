@@ -13,6 +13,11 @@
     // Cloudflare Worker that emails the application. See worker/README.md.
     endpoint: 'https://bbfinance.jaxtech.workers.dev/api/application',
 
+    // Cloudflare Turnstile site key (the public half — the secret half is set
+    // on the Worker with `wrangler secret put TURNSTILE_SECRET`). Set both, or
+    // neither: the Worker rejects every submission once its secret exists.
+    turnstileSiteKey: '',
+
     // Dealership contact details, used by the Call / WhatsApp / Email buttons.
     phone:    '+27 82 739 8595',
     whatsapp: '27827398595',
@@ -739,6 +744,36 @@
 
   /* ══════════ Submit ══════════ */
 
+  /* ══════════════════ Turnstile ══════════════════
+     Loaded only when a site key is configured, so the form keeps working
+     unchanged for anyone running this without Turnstile set up. */
+
+  function mountTurnstile() {
+    if (!CONFIG.turnstileSiteKey) return;
+    const holder = $('#turnstile-holder');
+    if (!holder) return;
+    holder.hidden = false;
+
+    const s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    s.async = true;
+    s.defer = true;
+    s.onload = () => {
+      if (!window.turnstile) return;
+      window.turnstile.render(holder, {
+        sitekey: CONFIG.turnstileSiteKey,
+        action: 'finance-application'
+      });
+    };
+    document.head.appendChild(s);
+  }
+
+  /** The widget writes its token into a hidden input it manages itself. */
+  function turnstileToken() {
+    if (!CONFIG.turnstileSiteKey || !window.turnstile) return '';
+    try { return window.turnstile.getResponse() || ''; } catch (e) { return ''; }
+  }
+
   async function submit() {
     if (!validateStep(current)) return;
 
@@ -755,6 +790,18 @@
     // Silent bot rejection — a real applicant never sees this field.
     if (data.company_website) { finishSuccess(null); return; }
     delete data.company_website;
+
+    if (CONFIG.turnstileSiteKey) {
+      const token = turnstileToken();
+      if (!token) {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        statusEl.className = 'form-status error';
+        statusEl.textContent = 'Please complete the "I am human" check above, then submit again.';
+        return;
+      }
+      data.turnstileToken = token;
+    }
 
     // The picker's raw selections only matter for restoring a draft — the
     // backend gets the resolved vehicle/vehiclePrice pair instead.
@@ -809,6 +856,11 @@
   }
 
   function finishFailure(body) {
+    // A Turnstile token is single-use — without a reset the retry button
+    // would submit a token the server has already spent, and fail again.
+    if (CONFIG.turnstileSiteKey && window.turnstile) {
+      try { window.turnstile.reset(); } catch (e) {}
+    }
     form.hidden = true;
     progress.hidden = true;
     $('#failure').hidden = false;
@@ -862,6 +914,8 @@
       progress.hidden = false;
       show(total - 1, true);
     });
+
+    mountTurnstile();
 
     form.addEventListener('submit', e => { e.preventDefault(); submit(); });
     form.addEventListener('input', saveDraft);

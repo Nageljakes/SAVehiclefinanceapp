@@ -18,7 +18,8 @@ ALLOWED_ORIGINS = "https://nageljakes.github.io"
 # Left off, KV holds a masked copy only and email remains the system of record.
 STORE_FULL = "false"
 
-# Optional. Enables rate limiting and the stored copy.
+# STRONGLY RECOMMENDED. Without this binding there is no per-IP ceiling on a
+# public endpoint that sends email, so abuse is limited only by Turnstile.
 # Create with:  npx wrangler kv namespace create APPLICATIONS
 # then paste the id below and uncomment.
 # [[kv_namespaces]]
@@ -27,4 +28,6 @@ STORE_FULL = "false"
 
 # Secrets — set these with `npx wrangler secret put NAME`, never in this file:
 #   RESEND_API_KEY     required
-#   TURNSTILE_SECRET   optional
+#   TURNSTILE_SECRET   strongly recommended — once set, every submission must
+#                      carry a valid token, so set TURNSTILE_SITE_KEY in
+#                      app.js at the same time or the form will be rejected.
