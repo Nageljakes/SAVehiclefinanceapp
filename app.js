@@ -16,7 +16,7 @@
     // Cloudflare Turnstile site key (the public half — the secret half is set
     // on the Worker with `wrangler secret put TURNSTILE_SECRET`). Set both, or
     // neither: the Worker rejects every submission once its secret exists.
-    turnstileSiteKey: '',
+    turnstileSiteKey: '0x4AAAAAAEGZmvnas4ETw1AW',
 
     // Dealership contact details, used by the Call / WhatsApp / Email buttons.
     phone:    '+27 82 739 8595',
@@ -748,6 +748,10 @@
      Loaded only when a site key is configured, so the form keeps working
      unchanged for anyone running this without Turnstile set up. */
 
+  // Set when the widget cannot load or render at all — an ad-blocker, a
+  // hostname the key isn't registered for, Cloudflare being unreachable.
+  let turnstileBroken = false;
+
   function mountTurnstile() {
     if (!CONFIG.turnstileSiteKey) return;
     const holder = $('#turnstile-holder');
@@ -758,12 +762,19 @@
     s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
     s.async = true;
     s.defer = true;
+    s.onerror = () => { turnstileBroken = true; holder.hidden = true; };
     s.onload = () => {
-      if (!window.turnstile) return;
-      window.turnstile.render(holder, {
-        sitekey: CONFIG.turnstileSiteKey,
-        action: 'finance-application'
-      });
+      if (!window.turnstile) { turnstileBroken = true; holder.hidden = true; return; }
+      try {
+        window.turnstile.render(holder, {
+          sitekey: CONFIG.turnstileSiteKey,
+          action: 'finance-application',
+          'error-callback': () => { turnstileBroken = true; holder.hidden = true; }
+        });
+      } catch (e) {
+        turnstileBroken = true;
+        holder.hidden = true;
+      }
     };
     document.head.appendChild(s);
   }
@@ -791,7 +802,11 @@
     if (data.company_website) { finishSuccess(null); return; }
     delete data.company_website;
 
-    if (CONFIG.turnstileSiteKey) {
+    // If the widget is up but not yet solved, say so rather than spending a
+    // round trip. If it never loaded, submit anyway and let the Worker rule —
+    // a client-side check stops nobody who is willing to use curl, so blocking
+    // here would only ever turn away a real applicant.
+    if (CONFIG.turnstileSiteKey && !turnstileBroken) {
       const token = turnstileToken();
       if (!token) {
         btn.disabled = false;
